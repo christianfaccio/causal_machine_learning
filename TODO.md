@@ -4,7 +4,7 @@
 2. Introdurre il modello CEVAE e spiegarne l'idea principale --  Cfr. [https://arxiv.org/abs/1705.08821](Causal Effect Inference with Deep Latent-Variable Models)
 3. Confronto CEVAE con modelli di causal inference antecedenti (e.g. doWhy ? quali altri?) -- sul senso delle variabili latenti e delle proxies
     - su dati sintetici -- inventiamo un problema simpatico?
-    - su dati reali -- quali? Cancro (se non avesse subito l'intervento sarebbe guarito?)? spotify (se bohemian rapsody fosse stata più ballabile sarebbe stata più popolare)
+    - su dati reali -- quali? Cancro  [https://portal.gdc.cancer.gov/](GDC Data Portal) ? spotify (se bohemian rapsody fosse stata più ballabile sarebbe stata più popolare) ?
 4. Analisi dei risultati
     - generazione di controfattuali (sia nel caso di dati sintetici che reali) -- può essere interessante per la presentazione
     - studio dello spazio latente: è interpretabile? com'è fatto (studiando il vettore medio della normale multivariata)?
