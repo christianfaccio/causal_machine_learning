@@ -1,8 +1,8 @@
 # Possibile struttura:
 
 1. Introdurre il problema dei confounders in causal inference 
-2. Introdurre il modello CEVAE e spiegarne l'idea principale --  Cfr. [https://arxiv.org/abs/1705.08821](Causal Effect Inference with Deep Latent-Variable Models)
-3. Confronto CEVAE con modelli di causal inference antecedenti (e.g. doWhy ? quali altri?) -- sul senso delle variabili latenti e delle proxies
+2. Introdurre il modello CEVAE e spiegarne l'idea principale --  Cfr. [https://arxiv.org/abs/1705.08821](Causal Effect Inference with Deep Latent-Variable Models).
+3. Confronto CEVAE con modelli di causal inference antecedenti (e.g. doWhy ? quali altri?) -- introdurre le var latenti migliora le prestazioni + modello generativo (VAE) consente di generare controfattuali
     - su dati sintetici -- inventiamo un problema simpatico?
     - su dati reali -- quali? Cancro  [https://portal.gdc.cancer.gov/](GDC Data Portal) ? spotify (se bohemian rapsody fosse stata più ballabile sarebbe stata più popolare) ?
 4. Analisi dei risultati
