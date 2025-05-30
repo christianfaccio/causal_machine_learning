@@ -31,13 +31,19 @@ def get_device(args):
     """
     Automatically detect the best available device.
     Priority: CUDA > MPS (macOS) > CPU
+    Note: MPS support in Pyro may have compatibility issues, so we include a fallback.
     """
     if args.cuda and torch.cuda.is_available():
         device = "cuda"
         print(f"Using CUDA device: {torch.cuda.get_device_name()}")
     elif platform.system() == "Darwin" and torch.backends.mps.is_available():
-        device = "mps"
-        print("Using MPS (Metal Performance Shaders) on macOS")
+        # Check if MPS is explicitly requested or if we should try it
+        if args.mps:
+            device = "mps"
+            print("Using MPS (Metal Performance Shaders) on macOS")
+        else:
+            device = "cpu"
+            print("Using CPU (MPS available but not enabled - use --mps to enable)")
     else:
         device = "cpu"
         print("Using CPU")
@@ -65,7 +71,20 @@ def generate_data(args):
 def main(args):
     # Set device based on availability and platform
     device = get_device(args)
-    torch.set_default_device(device)
+    
+    # Try to set the device, with MPS fallback handling
+    try:
+        torch.set_default_device(device)
+        if device == "mps":
+            print("Successfully initialized MPS device")
+    except Exception as e:
+        if device == "mps":
+            print(f"MPS initialization failed: {e}")
+            print("Falling back to CPU")
+            device = "cpu"
+            torch.set_default_device(device)
+        else:
+            raise e
 
     # Generate synthetic data.
     pyro.set_rng_seed(args.seed)
@@ -122,6 +141,7 @@ if __name__ == "__main__":
     parser.add_argument("--weight-decay", default=1e-4, type=float)
     parser.add_argument("--seed", default=1234567890, type=int)
     parser.add_argument("--jit", action="store_true")
-    parser.add_argument("--cuda", action="store_true")
+    parser.add_argument("--cuda", action="store_true", help="Use CUDA if available")
+    parser.add_argument("--mps", action="store_true", help="Use MPS on macOS if available (experimental)")
     args = parser.parse_args()
     main(args)
