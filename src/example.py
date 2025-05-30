@@ -15,6 +15,7 @@ http://docs.pyro.ai/en/latest/contrib.cevae.html
 """
 import argparse
 import logging
+import platform
 
 import torch
 
@@ -24,6 +25,24 @@ from pyro.contrib.cevae import CEVAE
 
 logging.getLogger("pyro").setLevel(logging.DEBUG)
 logging.getLogger("pyro").handlers[0].setLevel(logging.DEBUG)
+
+
+def get_device(args):
+    """
+    Automatically detect the best available device.
+    Priority: CUDA > MPS (macOS) > CPU
+    """
+    if args.cuda and torch.cuda.is_available():
+        device = "cuda"
+        print(f"Using CUDA device: {torch.cuda.get_device_name()}")
+    elif platform.system() == "Darwin" and torch.backends.mps.is_available():
+        device = "mps"
+        print("Using MPS (Metal Performance Shaders) on macOS")
+    else:
+        device = "cpu"
+        print("Using CPU")
+    
+    return device
 
 
 def generate_data(args):
@@ -44,8 +63,9 @@ def generate_data(args):
 
 
 def main(args):
-    if args.cuda:
-        torch.set_default_device("cuda")
+    # Set device based on availability and platform
+    device = get_device(args)
+    torch.set_default_device(device)
 
     # Generate synthetic data.
     pyro.set_rng_seed(args.seed)
