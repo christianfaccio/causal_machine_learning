@@ -14,8 +14,8 @@
 5. Conclusioni e futuri sviluppi
 
 # TODO
-
-- [ ] (cuda optimization)
+- 
+- [x] (cuda optimization)
 - [ ] Add a method to sample from the latent space and decode it
 - [ ] Add more methods for explainability and analysis
 - [ ] Interpretation of the latent space on syntetic and real data
