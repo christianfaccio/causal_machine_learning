@@ -303,6 +303,7 @@ class Model(PyroModule):
 
     def __init__(self, config):
         self.latent_dim = config["latent_dim"]
+        self.y_params = []
         super().__init__()
         self.x_nn = DiagNormalNet(
             [config["latent_dim"]]
@@ -347,6 +348,7 @@ class Model(PyroModule):
         # Parameters are not shared among t values.
         params0 = self.y0_nn(z)
         params1 = self.y1_nn(z)
+        self.y_params.append((params0[0], params1[0]))
         t = t.bool()
         params = [torch.where(t, p1, p0) for p0, p1 in zip(params0, params1)]
         return self.y0_nn.make_dist(*params)
