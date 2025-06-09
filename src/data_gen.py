@@ -92,7 +92,8 @@ def synthetic_dataset_pyro(
         "t": t,                  # [n]
         "y": y,                  # [n]
         "z": z,                  # [n]
-        "ite": tau               # [n]  (since ITE = 1 + 0.5*z exactly)
+        "ite": tau,               # [n]  (since ITE = 1 + 0.5*z exactly)
+        "a": a,                  # [num_proxies]  (coefficients for proxies)
     }
 
 import torch
