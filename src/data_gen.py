@@ -2,7 +2,7 @@ import torch
 import pyro
 import pyro.distributions as dist
 
-def synthetic_dataset_pyro(
+def synthetic_dataset_non_linear(
     n: int = 2000,
     beta: float = 2.0,
     num_proxies: int = 10,
@@ -10,6 +10,7 @@ def synthetic_dataset_pyro(
     prior_type: str = "gaussian",
     sigma_x: float = 1.0,
     sigma_y: float = 1.0,
+    rho: float = 0.0,   
     seed: int | None = None,
 ):
     """
@@ -47,6 +48,9 @@ def synthetic_dataset_pyro(
         # define centers: 1 to +2, 0 to -2
         centers = torch.where(comp == 1, torch.full([n], 2.0), torch.full([n], -2.0))
         z = centers + dist.Normal(0.0, 1.0).sample([n])
+    elif prior_type == "lognormal":
+         # Positive-only, long-tailed
+         z = dist.LogNormal(loc=0.0, scale=1.0).sample([n])
     else:
         raise ValueError("prior_type must be 'gaussian' or 'bimodal'")
 
@@ -54,8 +58,22 @@ def synthetic_dataset_pyro(
 
     # a_j ~ Uniform(-1.5, 1.5) for each proxy dimension j
     a = dist.Uniform(-1.5, 1.5).sample([num_proxies])
-    # noise eps_ij ~ Normal(0, sigma_x)
-    eps = dist.Normal(0.0, sigma_x).sample([n, num_proxies])
+
+    # --------------------------- correlated noise ------------------------- #
+    if not (0.0 <= rho < 1.0):
+        raise ValueError("rho must satisfy 0 ≤ rho < 1")
+
+    if rho == 0.0:
+        # independent noise  ——  identical to the original implementation
+        eps = dist.Normal(0.0, sigma_x).sample([n, num_proxies])
+    else:
+        # build block-constant covariance Σ = σ²[(1-ρ)I + ρ11ᵀ]
+        eye   = torch.eye(num_proxies)
+        ones  = torch.ones(num_proxies, num_proxies)
+        sigma = sigma_x ** 2 * ((1.0 - rho) * eye + rho * ones)
+        mvn   = dist.MultivariateNormal(loc=torch.zeros(num_proxies), covariance_matrix=sigma)
+        eps   = mvn.sample([n])  
+
     # x_ij = tanh(z_i) * a_j + eps_ij
     x = torch.tanh(z).unsqueeze(1) * a.unsqueeze(0) + eps     
 
@@ -94,10 +112,6 @@ def synthetic_dataset_pyro(
         "z": z,                  # [n]
         "ite": tau               # [n]  (since ITE = 1 + 0.5*z exactly)
     }
-
-import torch
-import pyro
-import pyro.distributions as dist
 
 
 def synthetic_dataset_linear(
@@ -151,9 +165,12 @@ def synthetic_dataset_linear(
     z = dist.Normal(0.0, 1.0).sample([n])                # [n]
 
     # --------------------------- linear proxies ---------------------------- #
-    a = dist.Normal(0.0, 1.0).sample([num_proxies])      # coefficients a_j
-    eps_x = dist.Normal(0.0, sigma_x).sample([n, num_proxies])
-    x = z.unsqueeze(1) * a + eps_x                       # [n, p]
+    a = dist.Uniform(-10, 10).sample([num_proxies])
+    
+    eps = dist.Normal(0.0, sigma_x).sample([n, num_proxies])
+
+    
+    x = z.unsqueeze(1) * a + eps                       # [n, p]
 
     # optionally destroy information in a subset of proxies
     if shuffle_pct > 0.0:
