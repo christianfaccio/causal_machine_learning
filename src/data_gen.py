@@ -46,11 +46,9 @@ def synthetic_dataset_non_linear(
         # mixture: component ~ Bernoulli(0.5), then Normal(center, 1)
         comp = dist.Bernoulli(0.5).sample([n])  # 0 or 1
         # define centers: 1 to +2, 0 to -2
-        centers = torch.where(comp == 1, torch.full([n], 2.0), torch.full([n], -2.0))
+        centers = torch.where(comp == 1, torch.full([n], -5.0), torch.full([n], -2.0))
         z = centers + dist.Normal(0.0, 1.0).sample([n])
-    elif prior_type == "lognormal":
-         # Positive-only, long-tailed
-         z = dist.LogNormal(loc=0.0, scale=1.0).sample([n])
+    
     else:
         raise ValueError("prior_type must be 'gaussian' or 'bimodal'")
 
