@@ -2,7 +2,7 @@ import torch
 import pyro
 import pyro.distributions as dist
 
-def synthetic_dataset_pyro(
+def synthetic_dataset_non_linear(
     n: int = 2000,
     beta: float = 2.0,
     num_proxies: int = 10,
@@ -92,13 +92,8 @@ def synthetic_dataset_pyro(
         "t": t,                  # [n]
         "y": y,                  # [n]
         "z": z,                  # [n]
-        "ite": tau,               # [n]  (since ITE = 1 + 0.5*z exactly)
-        "a": a,                  # [num_proxies]  (coefficients for proxies)
+        "ite": tau               # [n]  (since ITE = 1 + 0.5*z exactly)
     }
-
-import torch
-import pyro
-import pyro.distributions as dist
 
 
 def synthetic_dataset_linear(
@@ -178,5 +173,5 @@ def synthetic_dataset_linear(
         "t":   t,
         "y":   y,
         "z":   z,
-        "ite": torch.full_like(z, tau)                   # every unit has ITE = 1
-    }
+        "ite": torch.full_like(z, tau)                   # every unit has ITE = 1    
+}

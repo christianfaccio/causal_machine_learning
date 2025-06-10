@@ -1,12 +1,12 @@
 from original_cevae import CEVAE
-from data_gen import synthetic_dataset_pyro
+from data_gen import synthetic_dataset_non_linear
 import matplotlib.pyplot as plt
 import torch
 from scipy import stats
 import numpy as np
 
 # ------------------------------ data generation ----------------------------- #
-data      = synthetic_dataset_pyro(n=2000, 
+data      = synthetic_dataset_non_linear(n=2000, 
                                    beta=2.0, 
                                    num_proxies=10,
                                    prior_type="gaussian", 
