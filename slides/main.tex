@@ -1,6 +1,7 @@
 \documentclass[10pt]{beamer}
 
 \usepackage{settings}
+\usepackage
 
 
 \title{Causal Effect Variational Autoencoder}
@@ -62,7 +63,22 @@
 \end{frame}
 
 \begin{frame}{Synthetic dataset}
-    
+    \begin{minipage}
+    [t]{0.5\textwidth}
+      \begin{figure}
+        \centering
+        \includegraphics[width=0.8\textwidth]{../images/synthetic_data.pdf}
+      \end{figure}
+    \end{minipage}
+    \begin{minipage}
+    [t]{0.5\textwidth}
+      \begin{itemize}
+        \item $T$ is a binary treatment
+        \item $Y$ is a continuous outcome
+        \item $X$ is a proxy for the latent confounder $Z$
+        \item $Z$ is a continuous latent variable
+      \end{itemize}
+    \end{minipage}
 \end{frame}
 
 \begin{frame}{Experiment: noise in the proxies}
