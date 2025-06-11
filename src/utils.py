@@ -12,6 +12,8 @@ from pyro.optim import Adam
 from pyro.infer import Predictive
 import matplotlib.pyplot as plt
 import seaborn as sns
+from pyro.contrib.cevae import CEVAE
+
 
 # ------------------------ classes for causal inference --------------------- #
 
@@ -350,6 +352,10 @@ def run_experiment(
             else:
                 raise ValueError(f"Unknown stage “{stage}”")
 
+        if model_cls is CEVAE and "num_proxies" in dk:
+        # data_kwargs["num_proxies"] → how many columns x will have
+            mk["feature_dim"] = int(val)
+
         # run one trial
         data = data_fn(**dk)
         x, t, y, ite = data["x"], data["t"], data["y"], data["ite"]
@@ -468,14 +474,16 @@ def synthetic_dataset_non_linear(
         # define centers: 1 to +2, 0 to -2
         centers = torch.where(comp == 1, torch.full([n], -5.0), torch.full([n], -2.0))
         z = centers + dist.Normal(0.0, 1.0).sample([n])
-    
+    elif prior_type == "lognormal":
+        # z ~ LogNormal(0, 1)
+        z = dist.LogNormal(0.0, 1.0).sample([n])
     else:
         raise ValueError("prior_type must be 'gaussian' or 'bimodal'")
 
     # ------------------------------ Proxy variables ----------------------------- #
 
     # a_j ~ Uniform(-1.5, 1.5) for each proxy dimension j
-    a = dist.Uniform(-1.5, 1.5).sample([num_proxies])
+    a = dist.Uniform(-10, 10).sample([num_proxies])
 
     # --------------------------- correlated noise ------------------------- #
     if not (0.0 <= rho < 1.0):
@@ -540,6 +548,8 @@ def synthetic_dataset_linear(
     sigma_x: float = 1.0,
     sigma_y: float = 1.0,
     seed: int | None = None,
+    rho: float = 0.0,
+    prior_type: str = "gaussian"  # 'gaussian' or 'bimodal'
 ):
     """
     Linear-Gaussian (See NIMPS 2021).
@@ -580,13 +590,36 @@ def synthetic_dataset_linear(
         torch.manual_seed(seed)
 
     # --------------------------- latent confounder ------------------------- #
-    z = dist.Normal(0.0, 1.0).sample([n])                # [n]
+    if prior_type == "gaussian":
+        # z ~ Normal(0, 1)
+        z = dist.Normal(0.0, 1.0).sample([n])
+    elif prior_type == "bimodal":
+        # mixture: component ~ Bernoulli(0.5), then Normal(center, 1)
+        comp = dist.Bernoulli(0.5).sample([n])  # 0 or 1
+        # define centers: 1 to +2, 0 to -2
+        centers = torch.where(comp == 1, torch.full([n], -5.0), torch.full([n], -2.0))
+        z = centers + dist.Normal(0.0, 1.0).sample([n])
+    elif prior_type == "lognormal":
+        # z ~ LogNormal(0, 1)
+        z = dist.LogNormal(0.0, 1.0).sample([n])
+    else:
+        raise ValueError("prior_type must be 'gaussian' or 'bimodal'")
+              # [n]
 
     # --------------------------- linear proxies ---------------------------- #
     a = dist.Uniform(-10, 10).sample([num_proxies])
     
-    eps = dist.Normal(0.0, sigma_x).sample([n, num_proxies])
-
+    # eps = dist.Normal(0.0, sigma_x).sample([n, num_proxies])
+    if rho == 0.0:
+        # independent noise  ——  identical to the original implementation
+        eps = dist.Normal(0.0, sigma_x).sample([n, num_proxies])
+    else:
+        # build block-constant covariance Σ = σ²[(1-ρ)I + ρ11ᵀ]
+        eye   = torch.eye(num_proxies)
+        ones  = torch.ones(num_proxies, num_proxies)
+        sigma = sigma_x ** 2 * ((1.0 - rho) * eye + rho * ones)
+        mvn   = dist.MultivariateNormal(loc=torch.zeros(num_proxies), covariance_matrix=sigma)
+        eps   = mvn.sample([n]) 
     
     x = z.unsqueeze(1) * a + eps                       # [n, p]
 
