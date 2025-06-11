@@ -2,3 +2,10 @@ venv/
 causalml/
 __pycache__
 .python-version
+*.aux
+*.log
+*.nav
+*.out
+*.snm
+*.gz
+*.toc

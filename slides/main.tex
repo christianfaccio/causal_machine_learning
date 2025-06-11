@@ -1,7 +1,7 @@
 \documentclass[10pt]{beamer}
 
 \usepackage{settings}
-\usepackage{minted}
+
 
 \title{Causal Effect Variational Autoencoder}
 \subtitle{Final Exam Project}
@@ -59,19 +59,6 @@
   \end{figure}
 
 
-\end{frame}
-
-%CEVAE: learning $Z$ from data
-\begin{frame}{Causal Effect Variational Autoencoder}
-  We introduce a Variational Autoencoder (VAE) to learn the latent space from the observed variables.  
-
-    \begin{figure}
-    \centering
-    % CEVAE architecture
-    \includegraphics[width=0.75\textwidth,trim={0 10cm 0 10cm}]{images/cevae_architecture.pdf}
-  \end{figure}
-
-    We can now estimate both the causal effect of $T$ on $Y$ and the expected outcome $Y$ if we force a treatment $do(t)$ on a certain subject.
 \end{frame}
 
 \begin{frame}{Synthetic dataset}
