@@ -20,7 +20,7 @@ A probability distribution over **Z** (in this case a Gaussian with learned mean
 
 In this network, $p(z,t,y|x)$ is computed.
 
-![Encoder](./images/inference_network_cevae.png)
+![Encoder](../images/inference_network_cevae.png)
 
 ### 2. Model Network (Decoder)
 
@@ -30,7 +30,7 @@ This network represents our **causal understanding** of how the variables relate
 - $p(t|Z)$ : how treatment assignment depends on confounders
 - $p(y|t,Z)$ : how outcomes depend on treatment and confounders
 
-![Decoder](./images/model_network_cevae.png)
+![Decoder](../images/model_network_cevae.png)
 
 ## Training Process
 CEVAE's training is sophisticated because it needs to handle a chicken-and-egg problem: we need to know Z to predict outcomes accurately, but we need to see outcomes to infer Z. Here VAE come to play. 
@@ -79,7 +79,7 @@ Training step for patient i with observed (x_i, t_i, y_i):
 
 During training the $p(z)$ is used just to regularize the ELBO. Also, during training we use the auxiliary distributions since we want to **train** them. 
 
-![CEVAE Architecture](./images/cevae_architecture.jpeg)
+![CEVAE Architecture](../images/cevae_architecture.jpeg)
 
 ## Prediction Process
 
