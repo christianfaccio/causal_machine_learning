@@ -5,6 +5,15 @@ from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import train_test_split
 import itertools
 import pandas as pd
+import pyro
+import pyro.distributions as dist
+from pyro.infer import SVI, Trace_ELBO, autoguide
+from pyro.optim import Adam
+from pyro.infer import Predictive
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# ------------------------ classes for causal inference --------------------- #
 
 class LinearModel:
     def __init__(self, **kwargs):
@@ -37,13 +46,6 @@ class LinearModel:
         y0 = self.model.predict(X0)
         diff = y1 - y0
         return torch.tensor(diff, dtype=torch.float32).reshape(-1, 1)
-
-import torch
-import pyro
-import pyro.distributions as dist
-from pyro.infer import SVI, Trace_ELBO, autoguide
-from pyro.optim import Adam
-from pyro.infer import Predictive
 
 class PyroLinearProxyModel:
     def __init__(self, init_scale=0.1, learning_rate=1e-2, weight_decay=0.0,local_steps=50):
@@ -294,7 +296,7 @@ class PyroLinearProxyModel:
         """
         return self.all_params
     
-
+# ---------------------------- experiments function -------------------------- #
 def run_experiment(
     param_grid: dict,
     data_fn: callable,
@@ -370,22 +372,6 @@ def run_experiment(
 
 # ---------------------------- metrics definition ---------------------------- #
 
-# def abs_ate_error(model, x_te, ite_te):
-#     est = model.ite(x_te).mean().item()
-#     true = ite_te.mean().item()
-#     return abs(est - true)
-
-# def rel_ate_error(model, x_te, ite_te):
-#     est = model.ite(x_te).mean().item()
-#     true = ite_te.mean().item()
-#     return abs(est - true) / abs(true)
-
-# def nrmse_ite(model, x_te, ite_te):
-#     pred = model.ite(x_te).cpu().numpy()
-#     true = ite_te.cpu().numpy()
-#     rmse = np.sqrt(np.mean((pred - true) ** 2))
-#     return rmse / true.std()
-
 def abs_ate_error(model, x_te, ite_te):
     est = model.ite(x_te).mean().detach().cpu().numpy()  # Detach before converting to NumPy
     true = ite_te.mean().detach().cpu().numpy()          # Detach before converting to NumPy
@@ -400,12 +386,9 @@ def rmse_ite(model, x_te, ite_te):
     pred = model.ite(x_te).detach().cpu().numpy()
     true = ite_te.cpu().numpy()
     rmse = np.sqrt(np.mean((pred - true)**2))
-    # denom = true.std()
     return rmse
 
-
-import matplotlib.pyplot as plt
-import seaborn as sns
+# ---------------------------- plot function --------------------------------- #
 
 def plot_three_experiment_results(ceave_res, linear, pgm, x_param="data__shuffle_pct", palette_name="Set2"):
     """
