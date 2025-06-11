@@ -59,6 +59,7 @@ pyzmq==26.4.0
 scikit-learn==1.7.0
 scipy==1.15.3
 scs==3.2.7.post2
+seaborn==0.13.2
 setuptools==80.9.0
 six==1.17.0
 stack-data==0.6.3
