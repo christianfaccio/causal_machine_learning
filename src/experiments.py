@@ -256,6 +256,85 @@ def auto_plot_datasets(
     )
 
 
+# @torch.no_grad()
+# def plot_predicted_vs_true(
+#     cevae,
+#     x_test,
+#     true_g_fn,
+#     true_tau_fn,
+#     num_samples: int = 100,
+#     figsize: tuple = (15,6),
+#     z_dim: int = 0,
+#     invert = False
+# ):
+#     # whiten and sample
+#     x = cevae.whiten(x_test)
+#     with pyro.plate("num_particles", num_samples, dim=-2):
+#         with poutine.trace() as tr, poutine.block(hide=["y", "t"]):
+#             cevae.guide(x)
+#         z = tr.trace.nodes["z"]["value"]
+#         with poutine.do(data={"t": torch.zeros(())}):
+#             y0_pred = poutine.replay(cevae.model.y_mean, tr.trace)(x)
+#         with poutine.do(data={"t": torch.ones(())}):
+#             y1_pred = poutine.replay(cevae.model.y_mean, tr.trace)(x)
+
+#     # flatten & sort
+#     z_flat  = z.reshape(-1, z.shape[-1])
+#     y0_flat = y0_pred.reshape(-1)
+#     y1_flat = y1_pred.reshape(-1)
+#     z_plot  = z_flat[:, z_dim]
+#     idx     = torch.argsort(z_plot)
+#     z_s     = z_plot[idx]
+#     if invert:
+#         z_s = -z_s  # invert z if needed
+#     y0_s    = y0_flat[idx]
+#     y1_s    = y1_flat[idx]
+
+#     # true curves
+#     y0_true = true_g_fn(z_s)
+#     tau_true = true_tau_fn(z_s)
+#     y1_true = y0_true + tau_true
+
+#     # Compute common y-limits
+#     all_y = torch.cat([y0_s, y1_s, y0_true, y1_true]).cpu()
+#     y_min, y_max = all_y.min().item(), all_y.max().item()
+
+#     # plot with shared y-axis
+#     fig, (ax0, ax1) = plt.subplots(
+#         1, 2,
+#         figsize=figsize,
+#         sharey=True  
+#     )
+
+#     # Control
+#     ax0.scatter(z_s.cpu(), y0_s.cpu(), alpha=0.4, s=10, label="Predicted")
+#     ax0.plot   (z_s.cpu(), y0_true.cpu(),  '-', linewidth=3, label="True g(z)")
+#     ax0.set(xlabel=f"Z[{z_dim}]", ylabel="Outcome", title="Control")
+#     ax0.set_ylim(y_min, y_max)  # enforce identical limits
+#     ax0.legend(); ax0.grid(True, alpha=0.3)
+
+#     # Treatment
+#     ax1.scatter(z_s.cpu(), y1_s.cpu(), alpha=0.4, s=10, label="Predicted")
+#     ax1.plot   (z_s.cpu(), y1_true.cpu(),   '-', linewidth=3, label="True g(z)+τ(z)")
+#     ax1.set(xlabel=f"Z[{z_dim}]", title="Treatment")
+#     ax1.set_ylim(y_min, y_max)  # same limits as ax0
+#     ax1.legend(); ax1.grid(True, alpha=0.3)
+
+#     plt.tight_layout()
+#     plt.show()
+#     return fig, (ax0, ax1)
+
+import matplotlib.pyplot as plt
+import matplotlib.colors as mcolors
+import torch, pyro
+from pyro import poutine
+
+def _lighter(color, alpha=.3):
+    """Return RGBA tuple of `color` with reduced opacity (looks lighter)."""
+    rgba = list(mcolors.to_rgba(color))
+    rgba[-1] = alpha              # only change the alpha channel
+    return tuple(rgba)
+
 @torch.no_grad()
 def plot_predicted_vs_true(
     cevae,
@@ -263,11 +342,13 @@ def plot_predicted_vs_true(
     true_g_fn,
     true_tau_fn,
     num_samples: int = 100,
-    figsize: tuple = (15,6),
+    figsize: tuple = (15, 6),
     z_dim: int = 0,
-    invert = False
+    invert: bool = False,
+
+    colors: tuple = ("tab:blue", "tab:orange"),  # control, treatment
 ):
-    # whiten and sample
+
     x = cevae.whiten(x_test)
     with pyro.plate("num_particles", num_samples, dim=-2):
         with poutine.trace() as tr, poutine.block(hide=["y", "t"]):
@@ -278,47 +359,36 @@ def plot_predicted_vs_true(
         with poutine.do(data={"t": torch.ones(())}):
             y1_pred = poutine.replay(cevae.model.y_mean, tr.trace)(x)
 
-    # flatten & sort
-    z_flat  = z.reshape(-1, z.shape[-1])
-    y0_flat = y0_pred.reshape(-1)
-    y1_flat = y1_pred.reshape(-1)
-    z_plot  = z_flat[:, z_dim]
-    idx     = torch.argsort(z_plot)
-    z_s     = z_plot[idx]
-    if invert:
-        z_s = -z_s  # invert z if needed
-    y0_s    = y0_flat[idx]
-    y1_s    = y1_flat[idx]
 
-    # true curves
+    z_flat, y0_flat, y1_flat = z.reshape(-1, z.shape[-1]), y0_pred.reshape(-1), y1_pred.reshape(-1)
+    z_plot = z_flat[:, z_dim]
+    idx = torch.argsort(z_plot)
+    z_s = -z_plot[idx] if invert else z_plot[idx]
+    y0_s, y1_s = y0_flat[idx], y1_flat[idx]
+
+
     y0_true = true_g_fn(z_s)
     tau_true = true_tau_fn(z_s)
     y1_true = y0_true + tau_true
 
-    # Compute common y-limits
-    all_y = torch.cat([y0_s, y1_s, y0_true, y1_true]).cpu()
-    y_min, y_max = all_y.min().item(), all_y.max().item()
+    # identical y-limits
+    y_min, y_max = torch.cat([y0_s, y1_s, y0_true, y1_true]).min().item(), torch.cat([y0_s, y1_s, y0_true, y1_true]).max().item()
 
-    # plot with shared y-axis
-    fig, (ax0, ax1) = plt.subplots(
-        1, 2,
-        figsize=figsize,
-        sharey=True  
-    )
+    fig, (ax0, ax1) = plt.subplots(1, 2, figsize=figsize, sharey=True)
 
-    # Control
-    ax0.scatter(z_s.cpu(), y0_s.cpu(), alpha=0.4, s=10, label="Predicted")
-    ax0.plot   (z_s.cpu(), y0_true.cpu(),  '-', linewidth=3, label="True g(z)")
-    ax0.set(xlabel=f"Z[{z_dim}]", ylabel="Outcome", title="Control")
-    ax0.set_ylim(y_min, y_max)  # enforce identical limits
-    ax0.legend(); ax0.grid(True, alpha=0.3)
+    # Control (scatter lighter, line darker)
+    light_c0 = _lighter(colors[0])
+    ax0.scatter(z_s.cpu(), y0_s.cpu(), s=10, color=light_c0, label="Predicted")
+    ax0.plot   (z_s.cpu(), y0_true.cpu(), color=colors[0], linewidth=3, label="True g(z)")
+    ax0.set(xlabel=f"Z[{z_dim}]", ylabel="Outcome", title="Control", ylim=(y_min, y_max))
+    ax0.legend(); ax0.grid(True, alpha=.3)
 
     # Treatment
-    ax1.scatter(z_s.cpu(), y1_s.cpu(), alpha=0.4, s=10, label="Predicted")
-    ax1.plot   (z_s.cpu(), y1_true.cpu(),   '-', linewidth=3, label="True g(z)+τ(z)")
-    ax1.set(xlabel=f"Z[{z_dim}]", title="Treatment")
-    ax1.set_ylim(y_min, y_max)  # same limits as ax0
-    ax1.legend(); ax1.grid(True, alpha=0.3)
+    light_c1 = _lighter(colors[1])
+    ax1.scatter(z_s.cpu(), y1_s.cpu(), s=10, color=light_c1, label="Predicted")
+    ax1.plot   (z_s.cpu(), y1_true.cpu(), color=colors[1], linewidth=3, label="True g(z)+τ(z)")
+    ax1.set(xlabel=f"Z[{z_dim}]", title="Treatment", ylim=(y_min, y_max))
+    ax1.legend(); ax1.grid(True, alpha=.3)
 
     plt.tight_layout()
     plt.show()

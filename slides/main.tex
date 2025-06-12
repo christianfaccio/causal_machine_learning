@@ -229,28 +229,23 @@ But what if the confounder $Z$ (e.g. Wealth) is \textbf{not} observed and the ob
     \end{figure}
 \end{frame}
 
-
 \begin{frame}{Conclusions}
 
-\begin{columns}[T]
-  % Pros
-  \begin{column}{0.48\textwidth}
-    \textbf{Pros}
-    \begin{itemize}\setlength\itemsep{4pt}
-      \item Captures \emph{non-linear} causal links
-      \item Counterfactuals in one forward pass
-      \item Fewer hand-crafted assumptions
-    \end{itemize}
-  \end{column}
-  % Cons
-  \begin{column}{0.48\textwidth}
-    \textbf{Cons}
-    \begin{itemize}\setlength\itemsep{4pt}
-      \item Computationally intensive training
-      \item Sensitive to the hyperparameters
-    \end{itemize}
-  \end{column}
-\end{columns}
+\begin{itemize}\setlength\itemsep{6pt}
+
+  \item \textbf{Linear synthetic data} -- 
+        Linear models \emph{benefit} from strong prior assumptions and recover the true effects almost perfectly; CEVAE offers no gain and adds variance.
+
+  \item \textbf{Non-linear synthetic data} -- 
+        With a tuned latent dimension, CEVAE outperforms linear baselines; if untuned it over-fits and the latent loses causal meaning.
+
+  \item \textbf{Practical takeaway}  
+         -- Use simple models when you can state strong causal assumptions; switch to CEVAE to relax those assumptions—provided you can afford heavier training and tuning.
+
+  \item \textbf{Next steps} -- 
+        Test on real datasets, explore more sophisticate variant of CEVAE (e.g. \emph{TEDVAE}, \emph{DCEVAE}, \emph{ICEVAE})
+
+\end{itemize}
 
 \end{frame}
 
@@ -260,7 +255,5 @@ But what if the confounder $Z$ (e.g. Wealth) is \textbf{not} observed and the ob
   {\LARGE Thank You!}
 \end{frame}
 }
-
-
 
 \end{document}
