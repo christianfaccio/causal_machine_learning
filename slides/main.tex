@@ -79,22 +79,32 @@ But what if the confounder $Z$ (e.g. Wealth) is \textbf{not} observed and the ob
 
  \begin{frame}{Vanilla Latent Variable Model}
      \begin{itemize}
-         \item Assume parametric distributions
          \item Assume parametric relationships between variables
          \begin{equation*}
-           
+           Z \sim \mathcal{N}(0,\,1)
          \end{equation*}
-         \item Infer parameters using Stochastic Variational Inference (SVI)
+         \begin{equation*}
+           X_j \sim \mathcal{N}(a\,z + b,\; \text{diag}(\sigma_X^2))
+         \end{equation*}
+        \begin{equation*}
+           T \sim \mathrm{Be}(\sigma(c\,z))
+         \end{equation*}
+        \begin{equation*}
+           Y \sim \mathcal{N}(e\,t + f\,z,\,\sigma_Y^2)
+         \end{equation*}
+         \item Infer parameters using \textbf{Mean Field Variational Inference}
      \end{itemize}
 
-     \textbf{Problem:} to infer from new data point $x$ we need to train a new model at test time! 
+     \alert{\textbf{Problem:}} to infer from new data point $x$ we need to train a new model at test time! 
  \end{frame}
 
   \begin{frame}{Deep Latent Variable Model: CEVAE}
      \begin{itemize}
-         \item Assume parametric distributions
-         \item Assume parametric relationships between variables through \alert{Neural Networks}
+         \item Assume parametric relationships between variables through \alert{Neural Networks} $\rightarrow$ (Causal Effect) Variational AutoEncoder
      \end{itemize}
+    \begin{center}
+  \includegraphics[width=0.3\textwidth]{images/cevae_architecture.pdf}
+\end{center}
     No need for test time training! \textbf{amortized inference}
 
  \end{frame}
@@ -152,57 +162,56 @@ But what if the confounder $Z$ (e.g. Wealth) is \textbf{not} observed and the ob
         \text{NonLin}(z,t) = \sin(z)+\frac12z+t\left(1+\frac12z\right)      
         \end{equation*}
     \end{minipage}
-    
+    \centering
+    {\textbf{Remark:} ITE depends on interaction between $t$ and $z$!}
 \end{frame}
 
 \begin{frame}{Results (1/2): Linear Dataset}
     \begin{figure}[H]
-      \includegraphics[width=\textwidth]{../src/results/boxplot_linear.pdf}
+      \includegraphics[width=\textwidth]{images/boxplot_linear.pdf}
     \end{figure}
 \end{frame}
 
 \begin{frame}{Results (2/2): Non Linear Dataset}
     \begin{figure}[H]
-      \includegraphics[width=\textwidth]{../src/results/boxplot_non_linear.pdf}
+      \includegraphics[width=\textwidth]{images/boxplot_non_linear.pdf}
     \end{figure}
 \end{frame}
 
 \begin{frame}{Experiment 1: Increasing the sample size}
   \begin{figure}[H]
-      \includegraphics[width=\textwidth]{../src/results/MyRun_data__n--rmse_ite.pdf}
+      \includegraphics[width=\textwidth]{images/MyRun_data__n--rmse_ite.pdf}
     \end{figure}
 \end{frame}
 
 \begin{frame}{Experiment 2: Increasing correlation among proxies}
   \begin{figure}[H]
-      \includegraphics[width=\textwidth]{../src/results/MyRun_data__rho--rmse_ite.pdf}
+      \includegraphics[width=\textwidth]{images/MyRun_data__rho--rmse_ite.pdf}
     \end{figure}
 \end{frame}
 
 \begin{frame}{Experiment 3: Increasing decorrelation among proxies}
     \begin{figure}[H]
-      \includegraphics[width=\textwidth]{../src/results/MyRun_data__shuffle_pct--rmse_ite.pdf}
+      \includegraphics[width=\textwidth]{images/MyRun_data__shuffle_pct--rmse_ite.pdf}
     \end{figure}
-  \begin{figure}[H]
-      \includegraphics[width=\textwidth]{../src/results/MyRun_data__n--rmse_ite.pdf}
-    \end{figure}
+
 \end{frame}
 
 \begin{frame}{Experiment 4: Increasing latent dimension}
     \begin{figure}[H]
-      \includegraphics[width=\textwidth]{../src/results/MyRun_model__latent_dim--rmse_ite.pdf}
+      \includegraphics[width=\textwidth]{images/MyRun_model__latent_dim--rmse_ite.pdf}
     \end{figure}
 \end{frame}
 
 \begin{frame}{Experiment 5: latent distribution misspecified}
     \begin{figure}[H]
-      \includegraphics[width=\textwidth]{../src/results/MyRun_data__prior_type--rmse_ite.pdf}
+      \includegraphics[width=\textwidth]{images/MyRun_data__prior_type--rmse_ite.pdf}
     \end{figure}
 \end{frame}
 
 \begin{frame}{Experiment 6: Increasing the number of proxies}
     \begin{figure}[H]
-      \includegraphics[width=\textwidth]{../src/results/MyRun_data__num_proxies--rmse_ite.pdf}
+      \includegraphics[width=\textwidth]{images/MyRun_data__num_proxies--rmse_ite.pdf}
     \end{figure}
 \end{frame}
 

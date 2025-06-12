@@ -4,24 +4,6 @@ import pyro
 import pyro.distributions as dist
 
 
-# ---------------------------- metrics definition ---------------------------- #
-
-def abs_ate_error(model, x_te, ite_te):
-    est = model.ite(x_te).mean().detach().cpu().numpy()  # Detach before converting to NumPy
-    true = ite_te.mean().detach().cpu().numpy()          # Detach before converting to NumPy
-    return abs(est - true)
-
-def rel_ate_error(model, x_te, ite_te):
-    est = model.ite(x_te).mean().detach().cpu().numpy()  # Detach before converting to NumPy
-    true = ite_te.mean().detach().cpu().numpy()          # Detach before converting to NumPy
-    return abs(est - true) / abs(true)
-
-def rmse_ite(model, x_te, ite_te):
-    pred = model.ite(x_te).detach().cpu().numpy()
-    true = ite_te.cpu().numpy()
-    rmse = np.sqrt(np.mean((pred - true)**2))
-    return rmse
-
 
 # ------------------------ synthetic data generation ------------------------- #
 

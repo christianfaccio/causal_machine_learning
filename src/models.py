@@ -42,7 +42,7 @@ class LinearModel:
         return torch.tensor(diff, dtype=torch.float32).reshape(-1, 1)
 
 
-class PyroLinearProxyModel:
+class LatentVariableModel:
     def __init__(self,
                  init_scale: float    = 0.1,
                  learning_rate: float = 1e-2,
