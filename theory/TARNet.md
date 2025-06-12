@@ -16,7 +16,7 @@ and $\mathcal{R}$ is a model complexity term,
 
 using stochastic gradient descent. Both the prediction loss and the penalty term $IPM_G(.,.)$ are computed for one mini-batch at a time. 
 
-![TARNet](../images/TARNet.png "TARNet Architecture")
+![TARNet](../slides/images/TARNet.png "TARNet Architecture")
 
 We assume there exists a distribution $p(x,t,Y_0,Y_1)$ over $X\times\{0,1\}\times Y \times Y$, such that strong ignorability holds. We further assume we have a sample from that distribution $(x_1,t_1,y_1), \dots, (x_n,t_n,y_n)$, where $y_i \sim p(Y_1|x_i)$ if $t_i = 1$, $y_i \sim p(Y_0|x_i)$ if $t_i = 0$. This standard assumption means that the treatment assignment determines which potential outcome we see. Our goal is to find a representation $\Phi : X \to \mathcal{R}$ and hypothesis $h : X \times \{0,1\} \to Y$ that will minimize $\epsilon_{PEHE}(f)$ (expected Precision in Estimation of Heterogeneous Effect (PEHE) loss) for $f(x,t) := h(\Phi(x),t)$.
 
