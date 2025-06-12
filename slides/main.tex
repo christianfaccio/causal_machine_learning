@@ -60,7 +60,7 @@
     \end{column}
   \end{columns}
 
-  \centering{Here a linear rergession in principle can do the job!}
+  \centering{If the confounder is observed even a linear rergession can do the job!}
 \end{frame}
 
 \begin{frame}{Latent confounder}
@@ -69,7 +69,7 @@ But what if the confounder $Z$ (e.g. Wealth) is \textbf{not} observed and the ob
   \includegraphics[width=0.5\textwidth]{images/latent_confounder.pdf}
 \end{center}
   
-\textbf{Idea:} estimate the latent variable and condition on it!
+\textbf{Idea:} estimate the latent variable and condition on it
 % \begin{itemize}
 %     \item Latent Variable Model
 %     \item Deep Latent Variable Model
@@ -81,6 +81,9 @@ But what if the confounder $Z$ (e.g. Wealth) is \textbf{not} observed and the ob
      \begin{itemize}
          \item Assume parametric distributions
          \item Assume parametric relationships between variables
+         \begin{equation*}
+           
+         \end{equation*}
          \item Infer parameters using Stochastic Variational Inference (SVI)
      \end{itemize}
 
