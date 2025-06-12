@@ -114,9 +114,8 @@ But what if the confounder $Z$ (e.g. Wealth) is \textbf{not} observed and the ob
       \item Counterfactuals in one forward pass  \(\Rightarrow\) \textbf{amortized inference, no test-time training}
      \end{itemize}
     \begin{center}
-  \includegraphics[width=0.3\textwidth]{images/cevae_architecture.pdf}
+  \includegraphics[width=0.9\textwidth]{images/cevae_architecture.jpeg}
 \end{center}
-    No need for test time training! \textbf{amortized inference}
 
  \end{frame}
 
@@ -188,15 +187,15 @@ But what if the confounder $Z$ (e.g. Wealth) is \textbf{not} observed and the ob
 \end{frame}
 
 \begin{frame}{Internal Representation: Linear Dataset}
-  % \begin{figure}[H]
-  %   \includegraphics[width=\textwidth]{???}
-  % \end{figure}  
+  \begin{figure}[H]
+    \includegraphics[width=\textwidth]{../src/results/linear_predicted_vs_true.pdf}
+  \end{figure}  
 \end{frame}
 
 \begin{frame}{Internal Representation: Non Linear Dataset}
-  % \begin{figure}[H]
-  %   \includegraphics[width=\textwidth]{???}
-  % \end{figure}  
+  \begin{figure}[H]
+    \includegraphics[width=\textwidth]{../src/results/non_linear_predicted_vs_true.pdf}
+  \end{figure}  
 \end{frame}
 
 \begin{frame}{Experiment 1: Increasing the sample size}
@@ -205,26 +204,26 @@ But what if the confounder $Z$ (e.g. Wealth) is \textbf{not} observed and the ob
     \end{figure}
 \end{frame}
 
-\begin{frame}{Experiment 3: Increasing decorrelation among proxies}
+\begin{frame}{Experiment 2: Increasing decorrelation among proxies}
     \begin{figure}[H]
       \includegraphics[width=\textwidth]{images/MyRun_data__shuffle_pct--rmse_ite.pdf}
     \end{figure}
 
 \end{frame}
 
-\begin{frame}{Experiment 4: Increasing latent dimension}
+\begin{frame}{Experiment 3: Increasing latent dimension}
     \begin{figure}[H]
       \includegraphics[width=\textwidth]{images/MyRun_model__latent_dim--rmse_ite.pdf}
     \end{figure}
 \end{frame}
 
-\begin{frame}{Experiment 5: latent distribution misspecified}
+\begin{frame}{Experiment 4: latent distribution misspecified}
     \begin{figure}[H]
       \includegraphics[width=\textwidth]{images/MyRun_data__prior_type--rmse_ite.pdf}
     \end{figure}
 \end{frame}
 
-\begin{frame}{Experiment 6: Increasing the number of proxies}
+\begin{frame}{Experiment 5: Increasing the number of proxies}
     \begin{figure}[H]
       \includegraphics[width=\textwidth]{images/MyRun_data__num_proxies--rmse_ite.pdf}
     \end{figure}
