@@ -153,23 +153,54 @@ But what if the confounder $Z$ (e.g. Wealth) is \textbf{not} observed and the ob
 \end{frame}
 
 \begin{frame}{Results (1/2): Linear Dataset}
-    boxplot1
+    \begin{figure}[H]
+      \includegraphics[width=\textwidth]{../src/results/boxplot_linear.pdf}
+    \end{figure}
 \end{frame}
 
 \begin{frame}{Results (2/2): Non Linear Dataset}
-    boxplot2
+    \begin{figure}[H]
+      \includegraphics[width=\textwidth]{../src/results/boxplot_non_linear.pdf}
+    \end{figure}
 \end{frame}
 
-\begin{frame}{Experiment: latent distribution misspecified}
-    
+\begin{frame}{Experiment 1: Increasing the sample size}
+  \begin{figure}[H]
+      \includegraphics[width=\textwidth]{../src/results/MyRun_data__n--rmse_ite.pdf}
+    \end{figure}
 \end{frame}
 
-\begin{frame}{Experiment: changing latent dimension}
-    
+\begin{frame}{Experiment 2: Increasing correlation among proxies}
+  \begin{figure}[H]
+      \includegraphics[width=\textwidth]{../src/results/MyRun_data__rho--rmse_ite.pdf}
+    \end{figure}
 \end{frame}
 
-\begin{frame}{Experiment: increasing the treatment effect}
-    
+\begin{frame}{Experiment 3: Increasing decorrelation among proxies}
+    \begin{figure}[H]
+      \includegraphics[width=\textwidth]{../src/results/MyRun_data__shuffle_pct--rmse_ite.pdf}
+    \end{figure}
+  \begin{figure}[H]
+      \includegraphics[width=\textwidth]{../src/results/MyRun_data__n--rmse_ite.pdf}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Experiment 4: Increasing latent dimension}
+    \begin{figure}[H]
+      \includegraphics[width=\textwidth]{../src/results/MyRun_model__latent_dim--rmse_ite.pdf}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Experiment 5: latent distribution misspecified}
+    \begin{figure}[H]
+      \includegraphics[width=\textwidth]{../src/results/MyRun_data__prior_type--rmse_ite.pdf}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Experiment 6: Increasing the number of proxies}
+    \begin{figure}[H]
+      \includegraphics[width=\textwidth]{../src/results/MyRun_data__num_proxies--rmse_ite.pdf}
+    \end{figure}
 \end{frame}
 
 \begin{frame}{Conclusions}
