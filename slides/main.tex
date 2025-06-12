@@ -77,6 +77,7 @@ But what if the confounder $Z$ (e.g. Wealth) is \textbf{not} observed and the ob
 
  \end{frame}
 
+
  \begin{frame}{Vanilla Latent Variable Model}
      \begin{itemize}
          \item Assume parametric relationships between variables
@@ -93,14 +94,24 @@ But what if the confounder $Z$ (e.g. Wealth) is \textbf{not} observed and the ob
            Y \sim \mathcal{N}(e\,t + f\,z,\,\sigma_Y^2)
          \end{equation*}
          \item Infer parameters using \textbf{Mean Field Variational Inference}
+         \item For a new data point $x$:
+         \begin{itemize}
+             \item infer: $z_0 =\mathbb{E}[Z|x,T=0]$, $z_1=\mathbb{E}[Z|x,T=1]$
+             \item compute $\text{ITE} = \mathbb{E}[Y|T=1,z_1]-\mathbb{E}[Y|T=0,z_0]$
+         \end{itemize}
+          \item \alert{Problem:} we need to train a new model at test time!
      \end{itemize}
-
-     \alert{\textbf{Problem:}} to infer from new data point $x$ we need to train a new model at test time! 
  \end{frame}
 
   \begin{frame}{Deep Latent Variable Model: CEVAE}
      \begin{itemize}
-         \item Assume parametric relationships between variables through \alert{Neural Networks} $\rightarrow$ (Causal Effect) Variational AutoEncoder
+         \item Assume parametric relationships between variables through \alert{Neural Networks}
+         
+         \item \textbf{CEVAE} = VAE + causal semantics for latent \(Z\)  
+            \[
+              (X,\;T,\;Y)\longrightarrow\;Z \;\longrightarrow\; (X,\;T,\;Y)
+            \]
+      \item Counterfactuals in one forward pass  \(\Rightarrow\) \textbf{amortized inference, no test-time training}
      \end{itemize}
     \begin{center}
   \includegraphics[width=0.3\textwidth]{images/cevae_architecture.pdf}
@@ -108,6 +119,7 @@ But what if the confounder $Z$ (e.g. Wealth) is \textbf{not} observed and the ob
     No need for test time training! \textbf{amortized inference}
 
  \end{frame}
+
 
 \begin{frame}{Synthetic linear dataset}
     \begin{minipage}{0.48\textwidth}
@@ -124,7 +136,7 @@ But what if the confounder $Z$ (e.g. Wealth) is \textbf{not} observed and the ob
         X_j \sim \mathcal{N}(a_j z,\sigma_X^2)\,    
         \end{equation*}
         \begin{equation*}
-        T | Z \sim \text{Be}(\sigma(\beta z))    
+        T | Z \sim \mathrm{Be}(\sigma(\beta z))    
         \end{equation*}
         \small{\begin{equation*}
         Y|T,Z \sim \mathcal{N}(z + t, \sigma_Y^2)            
@@ -147,13 +159,10 @@ But what if the confounder $Z$ (e.g. Wealth) is \textbf{not} observed and the ob
             a \sim \mathcal{U}(-10,10)^d
         \end{equation*}
         \begin{equation*}
-        \Sigma=\sigma_X^2[(1-\rho) \mathbb{I}+\rho J]    
+        X_1,...,X_d \sim \mathcal{N}(a\tanh(z),\sigma_X^2\mathbb{I} )     
         \end{equation*}
         \begin{equation*}
-        X_1,...,X_d \sim \mathcal{N}(a\tanh(z),\Sigma)     
-        \end{equation*}
-        \begin{equation*}
-        T | Z \sim \text{Be}(\sigma(\beta z))    
+        T | Z \sim \mathrm{Be}(\sigma(\beta z))    
         \end{equation*}
         \begin{equation*}
         Y|T,Z \sim \mathcal{N}\left(\text{NonLin}(z,t),\sigma_Y^2\right)           
@@ -178,15 +187,21 @@ But what if the confounder $Z$ (e.g. Wealth) is \textbf{not} observed and the ob
     \end{figure}
 \end{frame}
 
+\begin{frame}{Internal Representation: Linear Dataset}
+  % \begin{figure}[H]
+  %   \includegraphics[width=\textwidth]{???}
+  % \end{figure}  
+\end{frame}
+
+\begin{frame}{Internal Representation: Non Linear Dataset}
+  % \begin{figure}[H]
+  %   \includegraphics[width=\textwidth]{???}
+  % \end{figure}  
+\end{frame}
+
 \begin{frame}{Experiment 1: Increasing the sample size}
   \begin{figure}[H]
       \includegraphics[width=\textwidth]{images/MyRun_data__n--rmse_ite.pdf}
-    \end{figure}
-\end{frame}
-
-\begin{frame}{Experiment 2: Increasing correlation among proxies}
-  \begin{figure}[H]
-      \includegraphics[width=\textwidth]{images/MyRun_data__rho--rmse_ite.pdf}
     \end{figure}
 \end{frame}
 
@@ -215,20 +230,29 @@ But what if the confounder $Z$ (e.g. Wealth) is \textbf{not} observed and the ob
     \end{figure}
 \end{frame}
 
+
 \begin{frame}{Conclusions}
 
-  Pros:
-  \begin{itemize}
-    \item Don't require strong assumptions on the data
-    \item No need training at test time
-    \item Only model able to perform well on non-linear data
-  \end{itemize}
+\begin{columns}[T]
+  % Pros
+  \begin{column}{0.48\textwidth}
+    \textbf{Pros}
+    \begin{itemize}\setlength\itemsep{4pt}
+      \item Captures \emph{non-linear} causal links
+      \item Counterfactuals in one forward pass
+      \item Fewer hand-crafted assumptions
+    \end{itemize}
+  \end{column}
+  % Cons
+  \begin{column}{0.48\textwidth}
+    \textbf{Cons}
+    \begin{itemize}\setlength\itemsep{4pt}
+      \item Computationally intensive training
+      \item Sensitive to the hyperparameters
+    \end{itemize}
+  \end{column}
+\end{columns}
 
-  Cons:
-  \begin{itemize}
-    \item Computationally expensive
-    \item Requires a lot of data
-  \end{itemize}
 \end{frame}
 
 {\setbeamercolor{palette primary}{fg=white, bg=bluscuro}
