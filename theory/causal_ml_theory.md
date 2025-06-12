@@ -189,18 +189,21 @@ A set of variables X satisfies the criterion relative to an ordered pair of vari
  
 
 ## Estimation of causal effect in a causal model
-Once we have identified the expression for the causal effect under the model assumptions, we can finally estimate the causal effect using statistical methods.
+We want to compute how the value of $y$ will change with respect to $T$, controlling for all $X_i$.
 
-For example, if we have obtained a backdoor set we use the **Back-door adjustment**:
+Since we have obtained a backdoor set we use the *Back-door adjustment*:
 If a set of variables X satisfy the back-door criterion relative to (T,Y) then the causal effect of T on Y is identifiable and is given by the formula:
 $$p(y|do(t))=\sum_x P(y|t,x)P(x)$$
 
-We can see from this formula that estimating the back-door adjust is thus equivalent to estimate the *conditional probability distribution* $P(y|t,x)$. One of the most common method to do so is to use **linear regression**. 
+We can see from this formula that estimating the back-door adjust is thus equivalent to estimate the conditional probability distribution $P(y|t,x)$. One of the most common method to do so is to use *linear regression*. 
 
-The linear regression method is useful when the data-generating process for the outcome Y can be approximated as the linear function $Y = \beta_0 + \beta_1 T + \beta_2 X + \varepsilon$. When we fit the linear model we are estimating $\mathbb{\hat E}[Y|T=t,X=x]$.
+The linear regression method is useful when the data-generating process for the outcome Y can be approximated as the linear function $Y = \beta_0 + \beta_1 T + \beta_2 X + \varepsilon$. When we fit the linear model we are estimating $\mathbb{E}[Y|T=t,X=x]$.
 
-We then compute the causal effect by marginalizing over all values of x and we use as estimate of the probability of each value $\hat P(x)$ the frequency of that value in the dataset. We obtain:
-$$\hat p(y|do(t)) \approx \sum_x \mathbb{\hat E}[Y|T=t,X=x]\hat P(x)$$
+We exploit this expected value to compute the ITE. We obtain:
+$$ ITE(x) = \mathbb{ E}[Y|T=1,X=x] - \mathbb{E}[Y|T=0,X=x] = \beta_1$$
+To obtain the ATE we would then take the mean:
+$$ ATE = \frac1N \sum_{i=1}^N \mathbb{ E}[Y|T=1,X=x_i] - \mathbb{E}[Y|T=0,X=x_i]$$
+but this is not really necessary since the ITE is the same for all points.
 
 ## DoWhy library
 
