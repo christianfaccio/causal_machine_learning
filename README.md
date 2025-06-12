@@ -14,8 +14,10 @@ This repository is organized in the following way:
     
     - `./results` contains all the plots of the results of the experiments
     - `causal_effect_inference.ipynb` is the main notebook containing all the procedures done in this project
+    - `data_generation.py` contains the data generating functions
+    - `experiments.py` contains the functions to run the experiments
+    - `models.py` contains the causal inference model classes
     - `synthetic_dataset.ipynb` contains graphs of the synthetic generated data
-    - `utils.py` contains all the functions used in the above notebook
     
 
 - `./slides` contains the slides for the presentation
