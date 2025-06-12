@@ -61,7 +61,7 @@ def run_experiment(
     Returns a pandas DataFrame with one row per combination, columns for each
     swept param plus each metric.
     """
-    # 1) build list of all combinations
+    # build list of all combinations
     keys, values = zip(*param_grid.items())
     combos = [dict(zip(keys, combo)) for combo in itertools.product(*values)]
 
@@ -98,7 +98,7 @@ def run_experiment(
         model = model_cls(**mk)
         losses = model.fit(x_tr, t_tr, y_tr, **fk)
 
-        # 4) build result row
+        # build result row
         row = dict(combo)
         row["final_elbo"] = losses[-1] 
         for mname, mfn in metrics_fns.items():
@@ -267,7 +267,7 @@ def plot_predicted_vs_true(
     z_dim: int = 0,
     invert = False
 ):
-    # 1) whiten and sample
+    # whiten and sample
     x = cevae.whiten(x_test)
     with pyro.plate("num_particles", num_samples, dim=-2):
         with poutine.trace() as tr, poutine.block(hide=["y", "t"]):
@@ -278,7 +278,7 @@ def plot_predicted_vs_true(
         with poutine.do(data={"t": torch.ones(())}):
             y1_pred = poutine.replay(cevae.model.y_mean, tr.trace)(x)
 
-    # 2) flatten & sort
+    # flatten & sort
     z_flat  = z.reshape(-1, z.shape[-1])
     y0_flat = y0_pred.reshape(-1)
     y1_flat = y1_pred.reshape(-1)
@@ -290,7 +290,7 @@ def plot_predicted_vs_true(
     y0_s    = y0_flat[idx]
     y1_s    = y1_flat[idx]
 
-    # 3) true curves
+    # true curves
     y0_true = true_g_fn(z_s)
     tau_true = true_tau_fn(z_s)
     y1_true = y0_true + tau_true
@@ -299,11 +299,11 @@ def plot_predicted_vs_true(
     all_y = torch.cat([y0_s, y1_s, y0_true, y1_true]).cpu()
     y_min, y_max = all_y.min().item(), all_y.max().item()
 
-    # 4) plot with shared y-axis
+    # plot with shared y-axis
     fig, (ax0, ax1) = plt.subplots(
         1, 2,
         figsize=figsize,
-        sharey=True  # <–– this makes both subplots use the same y-scale
+        sharey=True  
     )
 
     # Control

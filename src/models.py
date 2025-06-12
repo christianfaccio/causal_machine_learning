@@ -26,7 +26,7 @@ class LinearModel:
         self.model.fit(X, y, **fit_kwargs)
         y_pred = self.model.predict(X)
         mse = mean_squared_error(y, y_pred)
-        return [mse]  # Fake ELBO for compatibility
+        return [mse]  
 
     def ite(self, x):
         if isinstance(x, torch.Tensor):
@@ -158,18 +158,16 @@ class LatentVariableModel:
         # i.e. clear then re-register only your p_params, then snapshot the names
         raw_p = {name: val.detach().clone()
                 for name, val in pyro.get_param_store().items()
-                if not name.startswith("AutoDiagonalNormal")}  # or simply list your p-param names
+                if not name.startswith("AutoDiagonalNormal")} 
         pyro.clear_param_store()
         for name, val in raw_p.items():
             p = pyro.param(name, val)
             p.requires_grad_(False)
 
-        # NOW snapshot the store keys – these are *only* your p-params*
         after1_names = set(pyro.get_param_store().keys())
         self.p_params = {name: pyro.param(name).detach().clone()
                         for name in after1_names}
 
-        # now set up & train guide_xt on (x,t) only
         self.guide_xt = autoguide.AutoDiagonalNormal(
             self.model_xt, init_scale=self.init_scale
         )
@@ -188,14 +186,12 @@ class LatentVariableModel:
         
         after2_names = set(pyro.get_param_store().keys())
 
-        # The difference now *is* just the new q-params
         q_only_names = after2_names - after1_names
         self.q_params = {
             name: pyro.param(name).detach().clone()
             for name in q_only_names
         }
 
-        # build the predictive object _after_ training guide_xt
         self.predictive_xt = Predictive(
             self.model_xt,
             guide=self.guide_xt,
@@ -220,13 +216,11 @@ class LatentVariableModel:
         # re-run a fresh AutoDiagonalNormal guide on (x_new, t_vec)
         # so that its latent size = N_new
         def infer_loc(t_vec):
-            # 1) clear out any old guide params, but keep your frozen p-params
             pyro.clear_param_store()
             for name, val in self.p_params.items():
                 p = pyro.param(name, val.to(device))
                 p.requires_grad_(False)
 
-            # 2) instantiate a brand-new guide that will now see plate("data",N_new)
             guide_local = autoguide.AutoDiagonalNormal(
                 self.model_xt, init_scale=self.init_scale
             )
@@ -236,7 +230,6 @@ class LatentVariableModel:
                                   "weight_decay": self.weight_decay}),
                             loss=Trace_ELBO())
 
-            # 3) do a few local SVI steps so that guide_local learns loc/scale of length N_new
             for _ in range(self.local_steps):
                 svi_local.step(x_new, t_vec)
 
