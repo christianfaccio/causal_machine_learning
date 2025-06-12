@@ -68,26 +68,25 @@ class PyroLinearProxyModel:
         c      = pyro.param("c",      torch.zeros(L))
         e      = pyro.param("e",      torch.tensor(0.))    # ATE scalar
         f      = pyro.param("f",      torch.zeros(L))
-        sigmax = pyro.param("sigmax", torch.ones(D))
+        sigmax = pyro.param("sigmax", torch.tensor(1.))
         sigmay = pyro.param("sigmay", torch.tensor(1.))
 
         with pyro.plate("data", N):
-            # z is now a vector of length L
+            # z is now a vector of length [1,L]
             z = pyro.sample("z",
                             dist.Normal(0., 1.)
                                 .expand([L])
-                                .to_event(1))           # z: [N, L]
+                                .to_event(1))           
 
-            # x_obs: project z [N,L] → [N,D] via matrix multiply
-            loc_x = z.matmul(a) + b             # (N,L) @ (L,D) → (N,D)
+            # x_obs: project z [1,L] → [1,D] via matrix multiply
+            loc_x = z.matmul(a) + b             # (1,L) @ (L,D) → (1,D)
             pyro.sample("x_obs",
-                        dist.Normal(loc_x, sigmax)
-                            .to_event(1),
+                        dist.MultivariateNormal(loc_x, sigmax*torch.eye(D)),
                         obs=x)
 
             # t_obs: logistic on a linear combination of z
-            logits_t = (z * c).sum(-1)          # dot‐product → (N,)
-            pyro.sample("t_obs",
+            logits_t = (z * c).sum(-1)          # dot‐product → (1,)
+            t = pyro.sample("t_obs",
                         dist.Bernoulli(logits=logits_t),
                         obs=t)
 
