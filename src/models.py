@@ -78,19 +78,19 @@ class LatentVariableModel:
                                 .expand([L])
                                 .to_event(1))           
 
-            # x_obs: project z [1,L] → [1,D] via matrix multiply
-            loc_x = z.matmul(a) + b             # (1,L) @ (L,D) → (1,D)
+            # x_obs: project z [1,L] to [1,D] via matrix multiply
+            loc_x = z.matmul(a) + b             # (1,L) @ (L,D) = (1,D)
             pyro.sample("x_obs",
                         dist.MultivariateNormal(loc_x, sigmax*torch.eye(D)),
                         obs=x)
 
             # t_obs: logistic on a linear combination of z
-            logits_t = (z * c).sum(-1)          # dot‐product → (1,)
+            logits_t = (z * c).sum(-1)          # dot‐product is (1,)
             t = pyro.sample("t_obs",
                         dist.Bernoulli(logits=logits_t),
                         obs=t)
 
-            # y_obs: ATE e*t plus projection f·z
+            # y_obs: ATE e*t plus projection f on z
             mean_y = e * t + (z * f).sum(-1)
             pyro.sample("y_obs",
                         dist.Normal(mean_y, sigmay),
