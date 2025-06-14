@@ -1,6 +1,6 @@
 <div align="center">
-    <h1>From Latent to Deep Latent</h1>
-    <h2>Causal Inference with CEVAE<h2>
+    <h1>From Latent to Deep Latent Variable Models</h1>
+    <h2>A Study On Causal Effect Inference with CEVAE<h2>
     <h3>Authors: Valeria De Stasio, Christian Faccio, Giovanni Lucarelli</h3>
     <h6>This project explores the problem of causal inference, where we want to make inference on the hidden confounder Z, which is represented by some proxies X and influences both the treatment T and the outcome Y of an experiment. Starting from a basic approach where we did not consider hidden confounders at all, we delve deeper in the latent variables model with SVI optimization and in the CEVAE model, experimenting with the underlying architecture and comparing the results.</h6>
 </div>
