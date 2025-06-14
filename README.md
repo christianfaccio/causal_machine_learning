@@ -26,6 +26,7 @@ This repository is organized in the following way:
     - `causal_ml_theory.md` covers the main theory about causal machine learning
     - `cevae_theory.md` explains the CEVAE architecture
     - `TARNet.md` covers the neural network architecture underlying the CEVAE
+    - `LVM_vs_CEVAE.md` contains a direct comparison, from the theoretical point of view, between the latent variable model and its deep analogue (*i.e.* the CEVAE)
 
 
 ---
