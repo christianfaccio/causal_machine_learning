@@ -81,43 +81,80 @@ But what if the confounder $Z$ (e.g. Wealth) is \textbf{not} observed and the ob
  \begin{frame}{Vanilla Latent Variable Model}
      \begin{itemize}
          \item Assume parametric relationships between variables
-         \begin{equation*}
-           Z \sim \mathcal{N}(0,\,1)
-         \end{equation*}
-         \begin{equation*}
-           X_j \sim \mathcal{N}(a\,z + b,\; \text{diag}(\sigma_X^2))
-         \end{equation*}
-        \begin{equation*}
-           T \sim \mathrm{Be}(\sigma(c\,z))
-         \end{equation*}
-        \begin{equation*}
-           Y \sim \mathcal{N}(e\,t + f\,z,\,\sigma_Y^2)
-         \end{equation*}
-         \item Infer parameters using \textbf{Mean Field Variational Inference}
-         \item For a new data point $x$:
-         \begin{itemize}
-             \item infer: $z_0 =\mathbb{E}[Z|x,T=0]$, $z_1=\mathbb{E}[Z|x,T=1]$
-             \item compute $\text{ITE} = \mathbb{E}[Y|T=1,z_1]-\mathbb{E}[Y|T=0,z_0]$
-         \end{itemize}
+         \begin{columns}
+              \begin{column}{0.75\textwidth}
+                  \begin{equation*}
+                    Z \sim \mathcal{N}(0,\,1)
+                  \end{equation*}
+                  \begin{equation*}
+                    X_j \sim \mathcal{N}(a\,z + b,\; \text{diag}(\sigma_X^2))
+                  \end{equation*}
+                  \begin{equation*}
+                    T \sim \mathrm{Be}(\sigma(c\,z))
+                  \end{equation*}
+                  \begin{equation*}
+                    Y \sim \mathcal{N}(e\,t + f\,z,\,\sigma_Y^2)
+                  \end{equation*}
+              \end{column}
+              \begin{column}{0.5\textwidth}
+                  \includegraphics[width=0.5\textwidth]{images/model.jpg}
+              \end{column}
+         \end{columns}
+
+         \item \textbf{SVI} with \textit{Mean Field Assumption}
+        %  \item For a new data point $x$:
+        %  \begin{itemize}
+        %      \item infer: $z_0 =\mathbb{E}[Z|x,T=0]$, $z_1=\mathbb{E}[Z|x,T=1]$
+        %      \item compute $\text{ITE} = \mathbb{E}[Y|T=1,z_1]-\mathbb{E}[Y|T=0,z_0]$
+        %  \end{itemize}
           \item \alert{Problem:} we need to train a new model at test time!
      \end{itemize}
  \end{frame}
 
+ \begin{frame}{From Latent to Deep Latent}
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      \textbf{Latent Variable Model} (LVM):
+      \begin{itemize}
+        \item Linear functions
+        \item SVI + mini-SVI for new x
+        \item Small number of parameters
+        \item High interpretability
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \textbf{Deep Latent Variable Model} (CEVAE):
+      \begin{itemize}
+        \item MLP functions
+        \item SVI + Amortized inference
+        \item Large number of parameters
+        \item High flexibility
+      \end{itemize}
+    \end{column}
+  \end{columns}
+  \vspace{1cm}
+  \centering{\textbf{CEVAE} = LVM + MLPs + Amortized Inference\\ 
+  same causal idea, more flexibility and speed at test time.}
+\end{frame}
+
+
   \begin{frame}{Deep Latent Variable Model: CEVAE}
-     \begin{itemize}
-         \item Assume parametric relationships between variables through \alert{Neural Networks}
+    %  \begin{itemize}
+    %      \item Assume parametric relationships between variables through \alert{Neural Networks}
          
-         \item \textbf{CEVAE} = VAE + causal semantics for latent \(Z\)  
-            \[
-              (X,\;T,\;Y)\longrightarrow\;Z \;\longrightarrow\; (X,\;T,\;Y)
-            \]
-      \item Counterfactuals in one forward pass  \(\Rightarrow\) \textbf{amortized inference, no test-time training}
-     \end{itemize}
+    %      \item \textbf{CEVAE} = VAE + causal semantics for latent \(Z\)  
+    %         \[
+    %           (X,\;T,\;Y)\longrightarrow\;Z \;\longrightarrow\; (X,\;T,\;Y)
+    %         \]
+    %   \item Counterfactuals in one forward pass  \(\Rightarrow\) \textbf{amortized inference, no test-time training}
+    %  \end{itemize}
     \begin{center}
   \includegraphics[width=0.9\textwidth]{images/cevae_architecture.jpeg}
 \end{center}
 
  \end{frame}
+
+
 
 
 \begin{frame}{Synthetic linear dataset}
