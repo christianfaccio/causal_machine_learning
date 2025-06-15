@@ -80,7 +80,7 @@ But what if the confounder $Z$ (e.g. Wealth) is \textbf{not} observed and the ob
 
  \begin{frame}{Vanilla Latent Variable Model}
      \begin{itemize}
-         \item Assume parametric relationships between variables
+         \item \textbf{Generative model:}
          \begin{columns}
               \begin{column}{0.75\textwidth}
                   \begin{equation*}
@@ -101,15 +101,16 @@ But what if the confounder $Z$ (e.g. Wealth) is \textbf{not} observed and the ob
               \end{column}
          \end{columns}
 
-         \item \textbf{SVI} with \textit{Mean Field Assumption}
+         \item \textbf{Guide:} mean-field assumption over the observations
         %  \item For a new data point $x$:
         %  \begin{itemize}
         %      \item infer: $z_0 =\mathbb{E}[Z|x,T=0]$, $z_1=\mathbb{E}[Z|x,T=1]$
         %      \item compute $\text{ITE} = \mathbb{E}[Y|T=1,z_1]-\mathbb{E}[Y|T=0,z_0]$
         %  \end{itemize}
-          \item \alert{Problem:} we need to train a new model at test time!
+          \item \alert{\textbf{Problem:}} we need to train a new model at test time!
      \end{itemize}
  \end{frame}
+
 
  \begin{frame}{From Latent to Deep Latent}
   \begin{columns}
