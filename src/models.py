@@ -8,7 +8,6 @@ from pyro.infer import SVI, Trace_ELBO, autoguide, Predictive
 from pyro.optim import Adam
 from pyro import poutine
 
-
 class LinearModel:
     def __init__(self, **kwargs):
         self.model = LinearRegression(**kwargs)
@@ -50,7 +49,7 @@ class LatentVariableModel:
                  local_steps: int     = 50,
                  latent_dim: int      = 1):
         """
-        A simple latent‐dimensional SVI model whose ATE is the learned scalar 'e'.
+        A simple latent-dimensional SVI model whose ATE is the learned scalar 'e'.
         """
         self.init_scale     = init_scale
         self.learning_rate  = learning_rate
@@ -62,7 +61,7 @@ class LatentVariableModel:
         N, D = x.shape
         L    = self.latent_dim
 
-        # now a is L×D, c and f are length‐L
+        # now a is LxD, c and f are length‐L
         a      = pyro.param("a",      torch.zeros(L, D))
         b      = pyro.param("b",      torch.zeros(D))
         c      = pyro.param("c",      torch.zeros(L))
@@ -142,7 +141,9 @@ class LatentVariableModel:
         lr = learning_rate or self.learning_rate
         wd = weight_decay  or self.weight_decay
 
+        # ------------------- inference on z starting from (x,t,y) ------------------- #
         pyro.clear_param_store()
+
         guide = autoguide.AutoDiagonalNormal(self.model, init_scale=self.init_scale)
         optim = Adam({"lr": lr, "weight_decay": wd})
         svi   = SVI(self.model, guide, optim, loss=Trace_ELBO())
@@ -168,6 +169,7 @@ class LatentVariableModel:
         self.p_params = {name: pyro.param(name).detach().clone()
                         for name in after1_names}
 
+        # --------------------- inference on z starting from x,t --------------------- #
         self.guide_xt = autoguide.AutoDiagonalNormal(
             self.model_xt, init_scale=self.init_scale
         )
