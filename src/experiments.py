@@ -221,7 +221,7 @@ def auto_plot_datasets(
     all_results,
     x_param,
     plot_fn=plot_datasets,
-    models=('cevae', 'lr', 'pgm'),
+    models=('cevae', 'lr', 'lvm'),
     ds_names=('linear', 'non_linear'),
     save_dir: str = None,
     file_name_template: str = "{metric}_vs_{x_param}.pdf",

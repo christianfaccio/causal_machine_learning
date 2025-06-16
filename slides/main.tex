@@ -237,14 +237,11 @@ To address this problem:
 
 \begin{itemize}\setlength\itemsep{6pt}
 
-  \item \textbf{Linear synthetic data} -- 
-        Linear models \emph{benefit} from strong prior assumptions and recover the true effects almost perfectly; CEVAE offers no gain and adds variance.
+  \item \textbf{CEVAE} performs better on non-linear synthetic data, as more flexible
 
-  \item \textbf{Non-linear synthetic data} -- 
-        With a tuned latent dimension, CEVAE outperforms linear baselines; if untuned it over-fits and the latent loses causal meaning.
+  \item Overcomplicates simple problems, e.g. linear dataset
 
-  \item \textbf{Practical takeaway}  
-         -- Use simple models when you can state strong causal assumptions; switch to CEVAE to relax those assumptions—provided you can afford heavier training and tuning.
+  \item Does not need strong assumptions, being more robust than the LVM
 
   \item \textbf{Next steps} -- 
         Test on real datasets, explore more sophisticate variant of CEVAE (e.g. \emph{TEDVAE}, \emph{DCEVAE}, \emph{ICEVAE})
