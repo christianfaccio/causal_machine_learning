@@ -15,9 +15,8 @@
 \begin{document}
 
 \maketitle
-
-% magari un frame iniziale in cui introduciamo il concetto di causalità?
-\begin{frame}{Objective: estimating causal effects}
+%Objective: estimating causal effects
+\begin{frame}{}
     Estimate how a medical treatment $T$ affects the health $Y$ of a \textit{random} patient.
   \begin{figure}
     \centering
@@ -27,22 +26,16 @@
   \begin{equation*}
     P(Y=y|\text{do}(T=t))=P(Y=y|T=t)
   \end{equation*}
-  \begin{equation*}
-    \text{ITE} = \mathbb{E}[(Y|\text{do}(T=1)]-\mathbb{E}[(Y|\text{do}(T=0)]
-  \end{equation*}
   
   This is usually the case in a \textbf{randomized controlled trial} (RCT), where the treatment is randomly assigned to the patients.
 
 \end{frame}
 
 
-% How to intervene on already observed data?
-\begin{frame}{Confounder}
-  In a observational study:
-  \begin{itemize}
-    \item \textbf{no} control over the treatment $T$ assignment\\
-    $\rightarrow$ there may be a confounder $X$ (e.g. Income) that influences both variables
-  \end{itemize}
+%Confounder
+\begin{frame}{}
+  In a \textbf{observational} study \alert{no control} over the treatment $T$ assignment\\
+    $\rightarrow$ there may be a confounder $X$ (e.g. Income) that influences both $T$ and $Y$.
   \begin{columns}
     \begin{column}{0.5\textwidth}
       \begin{equation*}
@@ -61,9 +54,13 @@
   \end{columns}
 
   \centering{If the confounder is observed even a linear rergession can do the job!}
+    \begin{equation*}
+    \text{ITE}(x) = \mathbb{E}[(Y|\text{do}(T=1),x]-\mathbb{E}[(Y|\text{do}(T=0),x]
+  \end{equation*}
 \end{frame}
 
-\begin{frame}{Latent confounder}
+%Latent confounder
+\begin{frame}{}
 But what if the confounder $Z$ (e.g. Wealth) is \textbf{not} observed and the observed $X$ is only a proxy of it?
     \begin{center}
   \includegraphics[width=0.5\textwidth]{images/latent_confounder.pdf}
@@ -75,10 +72,32 @@ But what if the confounder $Z$ (e.g. Wealth) is \textbf{not} observed and the ob
 %     \item Deep Latent Variable Model
 % \end{itemize} 
 
+
+ \end{frame}
+
+  \section{Methodology}
+
+% Problem Statement
+ \begin{frame}{}
+Two different synthetic datasets, relationships between variables are:
+\begin{itemize}
+  \item \textbf{Linear} functions
+  \item \textbf{Non-linear} functions
+\end{itemize}
+
+To address this problem:
+\begin{itemize}
+  \item Linear Regression 
+  \item  Latent Variable Model (LVM)
+  \item Deep Latent Variable Model (CEVAE)
+\end{itemize}
+
  \end{frame}
 
 
- \begin{frame}{Vanilla Latent Variable Model}
+
+ %Vanilla Latent Variable Model
+ \begin{frame}{}
      \begin{itemize}
          \item \textbf{Generative model:}
          \begin{columns}
@@ -101,26 +120,24 @@ But what if the confounder $Z$ (e.g. Wealth) is \textbf{not} observed and the ob
               \end{column}
          \end{columns}
 
-         \item \textbf{Guide:} mean-field assumption over the observations
+         \item \textbf{SVI} on both the generative parameters and the posterior distribution
         %  \item For a new data point $x$:
         %  \begin{itemize}
         %      \item infer: $z_0 =\mathbb{E}[Z|x,T=0]$, $z_1=\mathbb{E}[Z|x,T=1]$
         %      \item compute $\text{ITE} = \mathbb{E}[Y|T=1,z_1]-\mathbb{E}[Y|T=0,z_0]$
         %  \end{itemize}
-          \item \alert{\textbf{Problem:}} we need to train a new model at test time!
      \end{itemize}
  \end{frame}
 
-
- \begin{frame}{From Latent to Deep Latent}
+%From Latent to Deep Latent
+ \begin{frame}{}
+  \vfill
   \begin{columns}
     \begin{column}{0.5\textwidth}
       \textbf{Latent Variable Model} (LVM):
       \begin{itemize}
         \item Linear functions
         \item SVI + mini-SVI for new x
-        \item Small number of parameters
-        \item High interpretability
       \end{itemize}
     \end{column}
     \begin{column}{0.5\textwidth}
@@ -128,18 +145,19 @@ But what if the confounder $Z$ (e.g. Wealth) is \textbf{not} observed and the ob
       \begin{itemize}
         \item MLP functions
         \item SVI + Amortized inference
-        \item Large number of parameters
-        \item High flexibility
       \end{itemize}
     \end{column}
   \end{columns}
-  \vspace{1cm}
-  \centering{\textbf{CEVAE} = LVM + MLPs + Amortized Inference\\ 
-  same causal idea, more flexibility and speed at test time.}
+  % \centering{\textbf{CEVAE} = LVM + MLPs + Amortized Inference\\ 
+  % same causal idea, more flexibility and speed at test time.}
+\vspace{0.5cm}
+  \begin{center}
+      \includegraphics[width=0.9\textwidth]{images/cevae_architecture.jpeg}
+  \end{center}
 \end{frame}
 
 
-  \begin{frame}{Deep Latent Variable Model: CEVAE}
+  %\begin{frame}{Deep Latent Variable Model: CEVAE}
     %  \begin{itemize}
     %      \item Assume parametric relationships between variables through \alert{Neural Networks}
          
@@ -149,11 +167,99 @@ But what if the confounder $Z$ (e.g. Wealth) is \textbf{not} observed and the ob
     %         \]
     %   \item Counterfactuals in one forward pass  \(\Rightarrow\) \textbf{amortized inference, no test-time training}
     %  \end{itemize}
-    \begin{center}
-  \includegraphics[width=0.9\textwidth]{images/cevae_architecture.jpeg}
-\end{center}
 
- \end{frame}
+
+ %\end{frame}
+
+ \section{Results}
+
+ %Results (1/2): Linear Dataset
+\begin{frame}{}
+    \begin{figure}[H]
+      \includegraphics[width=\textwidth]{images/boxplot_linear.pdf}
+    \end{figure}
+\end{frame}
+
+%Results (2/2): Non Linear Dataset
+\begin{frame}{}
+    \begin{figure}[H]
+      \includegraphics[width=\textwidth]{images/boxplot_non_linear.pdf}
+    \end{figure}
+\end{frame}
+
+% %Internal Representation: Linear Dataset
+% \begin{frame}{}
+%   \begin{figure}[H]
+%     \includegraphics[width=\textwidth]{../src/results/linear_predicted_vs_true.pdf}
+%   \end{figure}  
+% \end{frame}
+
+% %Internal Representation: Non Linear Dataset
+% \begin{frame}{}
+%   \begin{figure}[H]
+%     \includegraphics[width=\textwidth]{../src/results/non_linear_predicted_vs_true.pdf}
+%   \end{figure}  
+% \end{frame}
+
+\begin{frame}{Increasing the sample size}
+  \begin{figure}[H]
+      \includegraphics[width=\textwidth]{images/MyRun_data__n--rmse_ite.pdf}
+    \end{figure}
+\end{frame}
+
+
+\begin{frame}{Increasing latent dimension}
+    \begin{figure}[H]
+      \includegraphics[width=\textwidth]{images/MyRun_model__latent_dim--rmse_ite.pdf}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Latent distribution misspecified}
+    \begin{figure}[H]
+      \includegraphics[width=\textwidth]{images/MyRun_data__prior_type--rmse_ite.pdf}
+    \end{figure}
+\end{frame}
+
+% \begin{frame}{Increasing the number of proxies}
+%     \begin{figure}[H]
+%       \includegraphics[width=\textwidth]{images/MyRun_data__num_proxies--rmse_ite.pdf}
+%     \end{figure}
+% \end{frame}
+
+% \begin{frame}{Increasing decorrelation among proxies}
+%     \begin{figure}[H]
+%       \includegraphics[width=\textwidth]{images/MyRun_data__shuffle_pct--rmse_ite.pdf}
+%     \end{figure}
+
+% \end{frame}
+
+\begin{frame}{Conclusions}
+
+\begin{itemize}\setlength\itemsep{6pt}
+
+  \item \textbf{Linear synthetic data} -- 
+        Linear models \emph{benefit} from strong prior assumptions and recover the true effects almost perfectly; CEVAE offers no gain and adds variance.
+
+  \item \textbf{Non-linear synthetic data} -- 
+        With a tuned latent dimension, CEVAE outperforms linear baselines; if untuned it over-fits and the latent loses causal meaning.
+
+  \item \textbf{Practical takeaway}  
+         -- Use simple models when you can state strong causal assumptions; switch to CEVAE to relax those assumptions—provided you can afford heavier training and tuning.
+
+  \item \textbf{Next steps} -- 
+        Test on real datasets, explore more sophisticate variant of CEVAE (e.g. \emph{TEDVAE}, \emph{DCEVAE}, \emph{ICEVAE})
+
+\end{itemize}
+
+\end{frame}
+
+{\setbeamercolor{palette primary}{fg=white, bg=bluscuro}
+\begin{frame}[standout]
+\thispagestyle{empty}
+  {\LARGE Thank You!}
+\end{frame}
+}
+
 
 
 
@@ -212,86 +318,5 @@ But what if the confounder $Z$ (e.g. Wealth) is \textbf{not} observed and the ob
     {\textbf{Remark:} ITE depends on interaction between $t$ and $z$!}
 \end{frame}
 
-\begin{frame}{Results (1/2): Linear Dataset}
-    \begin{figure}[H]
-      \includegraphics[width=\textwidth]{images/boxplot_linear.pdf}
-    \end{figure}
-\end{frame}
-
-\begin{frame}{Results (2/2): Non Linear Dataset}
-    \begin{figure}[H]
-      \includegraphics[width=\textwidth]{images/boxplot_non_linear.pdf}
-    \end{figure}
-\end{frame}
-
-\begin{frame}{Internal Representation: Linear Dataset}
-  \begin{figure}[H]
-    \includegraphics[width=\textwidth]{../src/results/linear_predicted_vs_true.pdf}
-  \end{figure}  
-\end{frame}
-
-\begin{frame}{Internal Representation: Non Linear Dataset}
-  \begin{figure}[H]
-    \includegraphics[width=\textwidth]{../src/results/non_linear_predicted_vs_true.pdf}
-  \end{figure}  
-\end{frame}
-
-\begin{frame}{Experiment 1: Increasing the sample size}
-  \begin{figure}[H]
-      \includegraphics[width=\textwidth]{images/MyRun_data__n--rmse_ite.pdf}
-    \end{figure}
-\end{frame}
-
-\begin{frame}{Experiment 2: Increasing decorrelation among proxies}
-    \begin{figure}[H]
-      \includegraphics[width=\textwidth]{images/MyRun_data__shuffle_pct--rmse_ite.pdf}
-    \end{figure}
-
-\end{frame}
-
-\begin{frame}{Experiment 3: Increasing latent dimension}
-    \begin{figure}[H]
-      \includegraphics[width=\textwidth]{images/MyRun_model__latent_dim--rmse_ite.pdf}
-    \end{figure}
-\end{frame}
-
-\begin{frame}{Experiment 4: latent distribution misspecified}
-    \begin{figure}[H]
-      \includegraphics[width=\textwidth]{images/MyRun_data__prior_type--rmse_ite.pdf}
-    \end{figure}
-\end{frame}
-
-\begin{frame}{Experiment 5: Increasing the number of proxies}
-    \begin{figure}[H]
-      \includegraphics[width=\textwidth]{images/MyRun_data__num_proxies--rmse_ite.pdf}
-    \end{figure}
-\end{frame}
-
-\begin{frame}{Conclusions}
-
-\begin{itemize}\setlength\itemsep{6pt}
-
-  \item \textbf{Linear synthetic data} -- 
-        Linear models \emph{benefit} from strong prior assumptions and recover the true effects almost perfectly; CEVAE offers no gain and adds variance.
-
-  \item \textbf{Non-linear synthetic data} -- 
-        With a tuned latent dimension, CEVAE outperforms linear baselines; if untuned it over-fits and the latent loses causal meaning.
-
-  \item \textbf{Practical takeaway}  
-         -- Use simple models when you can state strong causal assumptions; switch to CEVAE to relax those assumptions—provided you can afford heavier training and tuning.
-
-  \item \textbf{Next steps} -- 
-        Test on real datasets, explore more sophisticate variant of CEVAE (e.g. \emph{TEDVAE}, \emph{DCEVAE}, \emph{ICEVAE})
-
-\end{itemize}
-
-\end{frame}
-
-{\setbeamercolor{palette primary}{fg=white, bg=bluscuro}
-\begin{frame}[standout]
-\thispagestyle{empty}
-  {\LARGE Thank You!}
-\end{frame}
-}
 
 \end{document}

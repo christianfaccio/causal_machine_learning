@@ -44,11 +44,11 @@ $$
 
 ### Evidence Lower Bound
 
-$$
+$
 \mathcal{L}_i(\theta,\phi)=\mathbb{E}_{q_{\phi_{i}}}[\log p_\theta(z_i,x_i,t_i,y_i)] - \mathbb{E}_{q_{\phi_{i}}}[\log q_{\phi_{i}}(z_i|x_i,t_i,y_i)] \\
 
 \mathcal{L}=\sum_{i=1}^N\mathcal{L}_i
-$$
+$
 
 #### Estimating the Gradient
 
